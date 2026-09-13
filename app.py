@@ -17,6 +17,10 @@ MANIFEST = {
     "idPrefixes": ["tt"]
 }
 
+@app.route('/')
+def home():
+    return "Film-İzlə-HD Stremio Addon işləyir! Manifest üçün: /manifest.json"
+    
 @app.route('/manifest.json')
 def manifest():
     return jsonify(MANIFEST)
