@@ -1,0 +1,1 @@
+web: gunicorn addon:app
