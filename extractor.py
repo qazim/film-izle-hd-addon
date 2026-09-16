@@ -49,6 +49,10 @@ def search_movies_raw(query: str):
                         'year': year,
                         'rating': rating
                     })
+        results.sort(
+                    key=lambda x: int(x['year']) if x['year'].isdigit() else 0, 
+                    reverse=True
+                )
         return results
     except requests.RequestException as e:
         logger.error("Arama istek hatasi '%s': %s", query, e)
