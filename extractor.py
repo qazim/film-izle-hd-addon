@@ -288,10 +288,16 @@ def get_movie_details(movie_url: str):
             return None
 
         soup = BeautifulSoup(res.text, 'html.parser')
-
+        year = None
+        for item in soup.select("div.list-item"):
+            if "Yapım Yılı" in item.get_text():
+                year = item.find("a").get_text(strip=True)
+                break
         title_el = soup.select_one('h1.title-border, h1')
         title = title_el.get_text(strip=True) if title_el else "Film"
 
+        title = f"{title} ({year})" if year else title
+        
         orig_title_el = soup.select_one('.bolum-ismi')
         orig_title = orig_title_el.get_text(strip=True) if orig_title_el else ""
 
@@ -302,6 +308,7 @@ def get_movie_details(movie_url: str):
         iframe_srcs = [iframe.get('src') for iframe in iframes if iframe.get('src')]
 
         streams = []
+        print(f"debug {iframe_srcs} title: {title} title_el: {title_el} year: {year}")
         for src in iframe_srcs:
             if 'yabancidizim.com/rplayer/' in src:
                 try:
@@ -329,7 +336,7 @@ def get_movie_details(movie_url: str):
 
                                 streams.append({
                                     'type': 'hls',
-                                    'source_name': 'Film İzle HD Hızlı Sunucu',
+                                    'source_name': title,
                                     'm3u8_url': video_file,
                                     'tracks': tracks,
                                     'headers': {

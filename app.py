@@ -9,7 +9,7 @@ CORS(app)
 MANIFEST = {
     "id": "com.qalib.filmizlehd",
     "version": "1.0.0",
-    "name": "HDFilmCehennemi",
+    "name": "HD_Turk",
     "description": "Film İzle HD reposu əsasında Stremio axın addonu",
     "resources": ["stream"],
     "types": ["movie"],
@@ -49,39 +49,48 @@ def stream(type, id):
         return jsonify({"streams": []})
 
     # 3. İL UYĞUNLUĞU: Siyahıdan ilinə uyğun gələn filmi tapırıq
-    best_match = None
-    if movie_year:
-        for item in search_results:
-            # Saytdan gələn il ilə Cinemeta-dakı il üst-üstə düşürsə
-            if item.get('year') == movie_year:
-                best_match = item
-                break
+    best_match = []
+    for item in search_results:
+        # Saytdan gələn il ilə Cinemeta-dakı il üst-üstə düşürsə
+        if item.get('title'):
+            best_match.append(item)
+    print(best_match)
     
     # Əgər illə dəqiq uyğunlaşma tapılmasa, ehtiyat olaraq ilk nəticəni götürürük
     if not best_match:
         best_match = search_results[0]
 
     # 4. Seçilən filmin detallarını və m3u8 linkini çəkirik
-    details = get_movie_details(best_match['url'])
-    
-    if not details or not details.get('streams'):
-        return jsonify({"streams": []})
-
+    #details = get_movie_details(best_match['url'])
+    details = []
     stremio_streams = []
-    for s in details['streams']:
-        if s.get('type') == 'hls':
-            stremio_streams.append({
-                "title": f"HDFilmCehennemi.com | {s.get('source_name', 'Hızlı Sunucu')}",
-                "url": s['m3u8_url'],
-                "behaviorHints": {
-                    "notWebReady": False,
-                    "proxyHeaders": {
-                        "request": s.get('headers', {})
+    for title in best_match:
+        details.append(get_movie_details(title['url']))
+        
+    # details = [{'title': '...', 'streams': [...]}]
+    for movie in details:
+        # Hər bir filmin daxilindəki 'streams' siyahısını götürürük
+        movie_streams = movie.get('streams', [])
+        
+        # 'streams' siyahısının daxilindəki hər bir axını (stream) yoxlayırıq
+        for s in movie_streams:
+            if s.get('type') == 'hls':
+                print("\nhls tapıldı!\n")
+                stremio_streams.append({
+                    "title": f"Film | {s.get('source_name', 'Hızlı Sunucu')}",
+                    "url": s.get('m3u8_url'),
+                    "behaviorHints": {
+                        "notWebReady": False,
+                        "proxyHeaders": {
+                            "request": s.get('headers', {})
+                        }
                     }
-                }
-            })
+                })
+                print(stremio_streams)
 
     return jsonify({"streams": stremio_streams})
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=7000)
