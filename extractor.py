@@ -71,67 +71,69 @@ def search_movies(query: str):
     if raw_results:
         return raw_results
 
-    q_clean = q_str.lower()
-    variations = []
+    return []
+    
+    # q_clean = q_str.lower()
+    # variations = []
 
-    aliases = {
-        'spiderman': ['spider-man', 'spider man', 'spider', 'orumcek', 'orümcek'],
-        'spider-man': ['spider man', 'spiderman', 'spider', 'orumcek'],
-        'örümcek adam': ['spider', 'spider-man', 'orumcek'],
-        'orumcek adam': ['spider', 'spider-man', 'orumcek'],
-        'ironman': ['iron man', 'demir adam', 'iron'],
-        'demir adam': ['iron man', 'iron'],
-        'superman': ['super-man', 'super man', 'super'],
-        'batman': ['the batman', 'batman'],
-        'hizli ve ofkeli': ['hızlı', 'hizli', 'fast', 'fast and furious'],
-        'hızlı ve öfkeli': ['hızlı', 'hizli', 'fast', 'fast and furious'],
-        'fast and furious': ['hızlı', 'hizli', 'fast'],
-        'star wars': ['star wars', 'starwars', 'yildiz savaslari'],
-        'yildiz savaslari': ['star wars'],
-        'yıldız savaşları': ['star wars'],
-        'yuzuklerin efendisi': ['yuzuk', 'lord of the rings'],
-        'yüzüklerin efendisi': ['yuzuk', 'lord of the rings'],
-        'lord of the rings': ['yuzuk', 'lord of the rings', 'lotr'],
-        'harry potter': ['harry potter', 'harry'],
-        'avengers': ['yenilmezler', 'avengers'],
-        'yenilmezler': ['avengers'],
-        'transformers': ['transformers'],
-        'godzilla': ['godzilla'],
-        'jurassic park': ['jurassic', 'dinozor'],
-        'jurassic world': ['jurassic'],
-    }
+    # aliases = {
+        # 'spiderman': ['spider-man', 'spider man', 'spider', 'orumcek', 'orümcek'],
+        # 'spider-man': ['spider man', 'spiderman', 'spider', 'orumcek'],
+        # 'örümcek adam': ['spider', 'spider-man', 'orumcek'],
+        # 'orumcek adam': ['spider', 'spider-man', 'orumcek'],
+        # 'ironman': ['iron man', 'demir adam', 'iron'],
+        # 'demir adam': ['iron man', 'iron'],
+        # 'superman': ['super-man', 'super man', 'super'],
+        # 'batman': ['the batman', 'batman'],
+        # 'hizli ve ofkeli': ['hızlı', 'hizli', 'fast', 'fast and furious'],
+        # 'hızlı ve öfkeli': ['hızlı', 'hizli', 'fast', 'fast and furious'],
+        # 'fast and furious': ['hızlı', 'hizli', 'fast'],
+        # 'star wars': ['star wars', 'starwars', 'yildiz savaslari'],
+        # 'yildiz savaslari': ['star wars'],
+        # 'yıldız savaşları': ['star wars'],
+        # 'yuzuklerin efendisi': ['yuzuk', 'lord of the rings'],
+        # 'yüzüklerin efendisi': ['yuzuk', 'lord of the rings'],
+        # 'lord of the rings': ['yuzuk', 'lord of the rings', 'lotr'],
+        # 'harry potter': ['harry potter', 'harry'],
+        # 'avengers': ['yenilmezler', 'avengers'],
+        # 'yenilmezler': ['avengers'],
+        # 'transformers': ['transformers'],
+        # 'godzilla': ['godzilla'],
+        # 'jurassic park': ['jurassic', 'dinozor'],
+        # 'jurassic world': ['jurassic'],
+    # }
 
-    if q_clean in aliases:
-        variations.extend(aliases[q_clean])
+    # if q_clean in aliases:
+        # variations.extend(aliases[q_clean])
 
-    if 'man' in q_clean and not q_clean.endswith(' man') and not q_clean.startswith('man '):
-        variations.append(q_clean.replace('man', ' man'))
-        variations.append(q_clean.replace('man', '-man'))
+    # if 'man' in q_clean and not q_clean.endswith(' man') and not q_clean.startswith('man '):
+        # variations.append(q_clean.replace('man', ' man'))
+        # variations.append(q_clean.replace('man', '-man'))
 
-    tr_map = str.maketrans('çğışöüÇĞİŞÖÜ', 'cgisouCGISOU')
-    ascii_q = q_str.translate(tr_map)
-    if ascii_q != q_str:
-        variations.append(ascii_q)
+    # tr_map = str.maketrans('çğışöüÇĞİŞÖÜ', 'cgisouCGISOU')
+    # ascii_q = q_str.translate(tr_map)
+    # if ascii_q != q_str:
+        # variations.append(ascii_q)
 
-    words = q_str.split()
-    if len(words) > 1:
-        variations.append(words[0])
+    # words = q_str.split()
+    # if len(words) > 1:
+        # variations.append(words[0])
 
-    all_results = []
-    seen_urls = set()
+    # all_results = []
+    # seen_urls = set()
 
-    for v in variations:
-        if v.lower() == q_clean:
-            continue
-        v_res = search_movies_raw(v)
-        for m in v_res:
-            if m['url'] not in seen_urls:
-                seen_urls.add(m['url'])
-                all_results.append(m)
-        if len(all_results) >= 12:
-            break
+    # for v in variations:
+        # if v.lower() == q_clean:
+            # continue
+        # v_res = search_movies_raw(v)
+        # for m in v_res:
+            # if m['url'] not in seen_urls:
+                # seen_urls.add(m['url'])
+                # all_results.append(m)
+        # if len(all_results) >= 12:
+            # break
 
-    return all_results
+    # return all_results
 
 
 def decode_rplayer(html: str):
@@ -296,7 +298,7 @@ def get_movie_details(movie_url: str):
         title_el = soup.select_one('h1.title-border, h1')
         title = title_el.get_text(strip=True) if title_el else "Film"
 
-        title = f"{title} ({year})" if year else title
+        title = f"{title}\n Yil ({year})" if year else title
         
         orig_title_el = soup.select_one('.bolum-ismi')
         orig_title = orig_title_el.get_text(strip=True) if orig_title_el else ""
@@ -308,7 +310,7 @@ def get_movie_details(movie_url: str):
         iframe_srcs = [iframe.get('src') for iframe in iframes if iframe.get('src')]
 
         streams = []
-        print(f"debug {iframe_srcs} title: {title} title_el: {title_el} year: {year}")
+        #print(f"debug {iframe_srcs} title: {title} title_el: {title_el} year: {year}")
         for src in iframe_srcs:
             if 'yabancidizim.com/rplayer/' in src:
                 try:

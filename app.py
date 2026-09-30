@@ -54,7 +54,7 @@ def stream(type, id):
         # Saytdan gələn il ilə Cinemeta-dakı il üst-üstə düşürsə
         if item.get('title'):
             best_match.append(item)
-    print(best_match)
+    #print(best_match)
     
     # Əgər illə dəqiq uyğunlaşma tapılmasa, ehtiyat olaraq ilk nəticəni götürürük
     if not best_match:
@@ -64,8 +64,9 @@ def stream(type, id):
     #details = get_movie_details(best_match['url'])
     details = []
     stremio_streams = []
-    for title in best_match:
+    for n, title in enumerate(best_match[:5]):
         details.append(get_movie_details(title['url']))
+        print(f"{n} {title['title']}")
         
     # details = [{'title': '...', 'streams': [...]}]
     for movie in details:
@@ -75,9 +76,9 @@ def stream(type, id):
         # 'streams' siyahısının daxilindəki hər bir axını (stream) yoxlayırıq
         for s in movie_streams:
             if s.get('type') == 'hls':
-                print("\nhls tapıldı!\n")
+                #print("\nhls tapıldı!\n")
                 stremio_streams.append({
-                    "title": f"Film | {s.get('source_name', 'Hızlı Sunucu')}",
+                    "title": f"{s.get('source_name', 'Hızlı Sunucu')}",
                     "url": s.get('m3u8_url'),
                     "behaviorHints": {
                         "notWebReady": False,
@@ -86,7 +87,7 @@ def stream(type, id):
                         }
                     }
                 })
-                print(stremio_streams)
+                #print(stremio_streams)
 
     return jsonify({"streams": stremio_streams})
 
